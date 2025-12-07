@@ -5,6 +5,7 @@ import ua.opnu.util.DataProvider;
 import ua.opnu.util.Order;
 import ua.opnu.util.Product;
 
+import java.time.LocalDate;
 import java.util.*;
 
 public class HardTasks {
@@ -56,10 +57,16 @@ public class HardTasks {
         // 20, 27, 28, 29, 30, 32, 34, 37, 38, 40, 44, 45, 47, 48, 50
 
         // TODO: напишіть вміст методу згідно умовам для того, щоб пройти тести
-        return null;
+        return orders.stream().filter(pr -> pr.getProducts().stream().filter(f-> f.getCategory().equals("Baby")).toList().size()>0).toList();
     }
 
     public List<Product> applyDiscountToToys() {
+        return products
+                .stream().filter(f-> f.getCategory().equals("Toys"))
+                .map(e -> {
+                    e.setPrice((Double)e.getPrice()/2);
+                    return e;
+                }).toList();
 
         // region Вірна відповідь
         // id та нова ціна товарів:
@@ -77,35 +84,36 @@ public class HardTasks {
         // endregion
 
         // TODO: напишіть вміст методу згідно умовам для того, щоб пройти тести
-        return null;
     }
 
     public Optional<Product> getCheapestBook() {
+        return products.stream().filter(s -> s.getCategory().equals("Books"))
+                .min((e1,e2)-> Double.compare(e1.getPrice(), e2.getPrice()));
 
         // товар з id = 17
 
         // TODO: напишіть вміст методу згідно умовам для того, щоб пройти тести
-        return null;
     }
 
     public List<Order> getRecentOrders() {
-
+        return orders.stream().sorted((o1, o2) -> o2.getOrderDate().compareTo(o1.getOrderDate())).limit(3).toList();
         // id замовлень 23, 30, 33
 
         // TODO: напишіть вміст методу згідно умовам для того, щоб пройти тести
-        return null;
     }
 
     public DoubleSummaryStatistics getBooksStats() {
-
+        return products.stream().filter(s -> s.getCategory().equals("Books")).mapToDouble(Product::getPrice)
+                .summaryStatistics();
         // count = 5, average = 607.880000, max = 893.440000, min = 240.580000, sum = 3039.400000
 
         // TODO: напишіть вміст методу згідно умовам для того, щоб пройти тести
-        return null;
     }
 
     public Map<Integer, Integer> getOrdersProductsMap() {
-
+        Map<Integer, Integer> map = new HashMap<>();
+        orders.stream().forEach(el -> map.put(el.getId(), el.getProducts().size()));
+        return map;
         // region Вірна відповідь
         // 1 : 3
         // 2 : 4
@@ -160,11 +168,17 @@ public class HardTasks {
         // endregion
 
         // TODO: напишіть вміст методу згідно умовам для того, щоб пройти тести
-        return null;
     }
 
     public Map<String, List<Integer>> getProductsByCategory() {
-
+        Map<String, List<Integer>> map = new HashMap<>();
+        products.stream()
+                .map(el -> el.getCategory())
+                .distinct()
+                .forEach(e -> map.put(e, products.stream()
+                                                    .filter(e1 -> e1.getCategory().equals(e))
+                                                    .map(o -> o.getId()).toList()));
+        return map;
         // region Вірна відповідь
         // Grocery : [3, 12, 14, 23, 25]
         // Toys : [2, 4, 6, 11, 13, 21, 26, 27, 28, 29, 30]
@@ -174,7 +188,6 @@ public class HardTasks {
         // endregion
 
         // TODO: напишіть вміст методу згідно умовам для того, щоб пройти тести
-        return null;
     }
 
 }
